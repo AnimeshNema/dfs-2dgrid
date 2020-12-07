@@ -3,6 +3,7 @@ Initializes a 2D grid, based on user input and performs Depth First Search algor
 
 Clone the repository
 #Build Instructions
+In your terminal..
 cd dfs-2dgrid
 mkdir build
 cd build
