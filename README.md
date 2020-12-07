@@ -1,12 +1,12 @@
-Initializes a 2D grid, based on user input and performs Depth First Search algorithm to find a path, if it exists.
+Initializes a 2D grid, based on user input and performs Depth First Search algorithm to find a path, if it exists.<br/>
 
-#Build Instructions
-Clone the repository
+#Build Instructions<br/>
+Clone the repository<br/>
 
-Open Terminal
-	cd dfs-2dgrid
-	mkdir build
-	cd build
-	cmake ..
-	make
-	./gridSearchDFS
+Open Terminal<br/>
+	cd dfs-2dgrid<br/>
+	mkdir build<br/>
+	cd build<br/>
+	cmake ..<br/>
+	make<br/>
+	./gridSearchDFS<br/>
