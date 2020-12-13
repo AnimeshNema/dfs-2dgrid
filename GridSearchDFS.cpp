@@ -1,16 +1,7 @@
-/*
-*
-* GridSearchDFS.cpp
-*
-* Created on Nov 23 2020
-*       Author: Animesh Nema
-*
-*/
 #include "GridSearchDFS.h"
 #include<iostream>
 #include<stdlib.h>
 #include<time.h>
-
 
 GridSearchDFS::GridSearchDFS(uint8_t row, uint8_t column, uint8_t obstacle_percentage)
 	:m_row(row), m_column(column), m_obstacle_percentage(obstacle_percentage), m_goal_reached(false)
@@ -22,23 +13,23 @@ GridSearchDFS::GridSearchDFS(uint8_t row, uint8_t column, uint8_t obstacle_perce
 GridSearchDFS::~GridSearchDFS()
 {}
 
-void GridSearchDFS::createGrid()
+void GridSearchDFS::createGrid() 
 {
     uint8_t random_number;
     srand(time(NULL));
 
     for (uint8_t i = 0; i < m_row; i++) {
 
-        for (uint8_t j = 0; j < m_column; j++)
+        for (uint8_t j = 0; j < m_column; j++) 
         {
             random_number = rand() % 100 + 1;     //Generates a random number between 1-100
 
-            if (random_number < m_obstacle_percentage)
-            {
+            if (random_number < m_obstacle_percentage) 
+            { 
                 m_grid[i][j] = 1;   // 1 Represents Obstacles.
             }
 
-            else
+            else 
             {
                 m_grid[i][j] = 0;  // 0 represents free space.
             }
@@ -65,19 +56,20 @@ void GridSearchDFS::printGrid()
     }
 }
 
-void GridSearchDFS::updatePath(uint8_t& curr_row, uint8_t& curr_column)
+void GridSearchDFS::updatePath(uint8_t& curr_row, uint8_t& curr_column) 
 {
-    uint8_t* previous_row_path = &(m_path.top()).first;
-    uint8_t* previous_column_path = &(m_path.top()).second;
+    uint8_t previous_row_path = m_path.top().first;
+    uint8_t previous_column_path = m_path.top().second;
 
-    if ((curr_row == *previous_row_path) || (curr_column == *previous_column_path))
+    if ((curr_row == previous_row_path) && (abs(curr_column - previous_column_path) ==1) 
+       || (curr_column == previous_column_path) && (abs(curr_row - previous_row_path) == 1))
     {
         m_path.push(std::make_pair(curr_row,curr_column));
         m_grid[curr_row][curr_column] = 4;      // 4 represents Path.
     }
-    else
+    else 
     {
-        m_grid[*previous_row_path][*previous_column_path] = 2; //mark as visited
+        m_grid[previous_row_path][previous_column_path] = 2; //mark as visited
         m_path.pop();
         updatePath(curr_row,curr_column);
     }
@@ -93,42 +85,40 @@ void GridSearchDFS::depthFirstSearch(uint8_t start_row, uint8_t start_column)
     {
         m_grid[start_row][start_column] = 4; //mark as visited
 
-        uint8_t* current_row = &start_row;
-        uint8_t* current_column = &start_column;
+        m_stack.push(std::make_pair(start_row, start_column));
+        m_path.push(std::make_pair(start_row, start_column));
 
-        m_stack.push(std::make_pair(*current_row, *current_column));
-        m_path.push(std::make_pair(*current_row, *current_column));
-
-        //Directions (left, up, right, down)
+        //Directions (left, up, right, down) 
         int8_t direction_row[4] = { 0,-1,0,1 };
         int8_t direction_column[4] = { -1,0,1,0 };
 
-        while (m_stack.size() > 0)
+        while (m_stack.size() > 0) 
         {
             std::pair<uint8_t, uint8_t> current_node = m_stack.top();
+            
+            uint8_t current_row = current_node.first;
+            uint8_t current_column = current_node.second;
+
             m_stack.pop();
 
-            current_row = &(current_node.first);
-            current_column = &(current_node.second);
-
-            if (m_grid[*current_row][*current_column] != 4)     //mark as visited
+            if (m_grid[current_row][current_column] != 4)     //mark as visited
             {
-                updatePath(*current_row, *current_column);
+                updatePath(current_row, current_column);
             }
 
-            for (uint8_t i = 0; i < 4; i++)
+            for (uint8_t i = 0; i < 4; i++) 
             {
-                uint8_t neighbour_row = *current_row + direction_row[i];
-                uint8_t neighbour_column = *current_column + direction_column[i];
+                uint8_t neighbour_row = current_row + direction_row[i];
+                uint8_t neighbour_column = current_column + direction_column[i];
 
-                if ((neighbour_row >= 0) && (neighbour_column >= 0)
+                if ((neighbour_row >= 0) && (neighbour_column >= 0) 
                     && (neighbour_row <= m_row - 1) && (neighbour_column <= m_column - 1)
-                    && (m_grid[neighbour_row][neighbour_column] == 0))
+                    && (m_grid[neighbour_row][neighbour_column] == 0)) 
                 {
                     m_stack.push(std::make_pair(neighbour_row, neighbour_column));
                     m_grid[neighbour_row][neighbour_column] = 2;
 
-                    if ((neighbour_row == (m_row - 1)) && (neighbour_column == (m_column - 1)))
+                    if ((neighbour_row == (m_row - 1)) && (neighbour_column == (m_column - 1))) 
                     {
                         std::cout << "GOAL REACHED." << std::endl;
                         m_grid[neighbour_row][neighbour_column] = 4;
@@ -138,14 +128,14 @@ void GridSearchDFS::depthFirstSearch(uint8_t start_row, uint8_t start_column)
                     }
                 }
             }
-            if (m_goal_reached == true)
+            if (m_goal_reached == true) 
             {
                 break;
             }
         }
 
         std::pair<uint8_t, uint8_t>& lastPoint = m_path.top();
-        if ((lastPoint.first, lastPoint.second) != (m_row - 1, m_column - 1))
+        if ((lastPoint.first, lastPoint.second) != (m_row - 1, m_column - 1)) 
         {
             std::cout << "No Path Found!" << std::endl;
         }
@@ -160,7 +150,7 @@ void GridSearchDFS::printPath()
         {
             for (uint8_t i = 0; i < m_row; i++)
             {
-                for (uint8_t j = 0; j < m_column; j++)
+                for (uint8_t j = 0; j < m_column; j++) 
                 {
                     if (m_grid[i][j] == 4)
                     {
@@ -187,12 +177,12 @@ void GridSearchDFS::printPath()
     {
         std::cout << " " << std::endl;
     }
-
+    
 }
 
 void GridSearchDFS::printPathCoordinates()
 {
-    while(!m_path.empty())
+    while(!m_path.empty()) 
     {
         std::pair<uint8_t, uint8_t>& points = m_path.top();
         std::cout << int(points.first) << "," << int(points.second) << std::endl;
